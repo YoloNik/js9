@@ -14,12 +14,15 @@ const refs = {
 refs.stopBtn.addEventListener(`click`, onStop);
 refs.startBtn.addEventListener(`click`, onStart);
 
+refs.stopBtn.disabled = true;
+
 function onStart() {
   intervalColorId = setInterval(() => {
     currentHexColor = getRandomHexColor();
     refs.background.style.background = currentHexColor;
   }, 1000);
   refs.startBtn.disabled = true;
+  refs.stopBtn.disabled = false;
 }
 
 function onStop() {
@@ -27,5 +30,6 @@ function onStop() {
     clearInterval(intervalColorId);
     refs.background.style.background = currentHexColor;
     refs.startBtn.disabled = false;
+    refs.stopBtn.disabled = true;
   }
 }

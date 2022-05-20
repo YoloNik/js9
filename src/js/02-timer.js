@@ -54,12 +54,16 @@ function convertMs(ms) {
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
+
+refs.startBtn.disabled = false;
+
 function start(e) {
-  refs.startBtn.disabled = true;
   let timeLeftUNIX = fp.selectedDates[0].getTime() - currentDates;
+
   const timerId = setInterval(() => {
     timeLeftUNIX -= 1000;
     timeLeftConvert = convertMs(timeLeftUNIX);
+    refs.startBtn.disabled = true;
 
     refs.timer.innerHTML = `<div class="field">
         <span class="value" data-days>${addLeadingZero(timeLeftConvert.days)}</span>
