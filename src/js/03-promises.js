@@ -19,7 +19,7 @@ function onClick(e) {
   let counterOfSteps = 0;
 
   if (amount !== '') {
-    createPromise().finally(Notiflix.Notify.warning(`☝️Your request is being processed`));
+    Notiflix.Notify.warning(`☝️Your request is being processed`);
     setTimeout(() => {
       const intervalId = setInterval(() => {
         createPromise(amount, delayStep)
@@ -41,7 +41,7 @@ function onClick(e) {
       }, delayStep);
     }, firstDelay);
   } else {
-    createPromise().finally(Notiflix.Notify.failure(`☝️Please select amount of promises`));
+    Notiflix.Notify.failure(`☝️Please select amount of promises`);
   }
 }
 
