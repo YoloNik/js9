@@ -15,27 +15,34 @@ function onClick(e) {
   let firstDelay = refs.delay.value;
   let delayStep = refs.step.value;
   let amount = refs.amount.value;
-  let counterOfAmount = null;
-  let counterOfSteps = null;
+  let counterOfAmount = 0;
+  let counterOfSteps = 0;
 
-  createPromise().finally(Notiflix.Notify.warning(`☝️Your request is being processed`));
-
-  setTimeout(() => {
-    const intervalId = setInterval(() => {
-      createPromise(amount, delayStep)
-        .then(({ position, delay }) => {
-          Notiflix.Notify.success(`✅ Fulfilled promise ${counterOfAmount} in ${counterOfSteps}ms`);
-        })
-        .catch(({ position, delay }) => {
-          Notiflix.Notify.failure(`❌ Rejected promise ${counterOfAmount} in ${counterOfSteps}ms`);
-        });
-      counterOfAmount += 1;
-      counterOfSteps += +delayStep;
-      if (counterOfAmount === +amount) {
-        clearInterval(intervalId);
-      }
-    }, delayStep);
-  }, firstDelay);
+  if (amount !== '') {
+    createPromise().finally(Notiflix.Notify.warning(`☝️Your request is being processed`));
+    setTimeout(() => {
+      const intervalId = setInterval(() => {
+        createPromise(amount, delayStep)
+          .then(({ position, delay }) => {
+            Notiflix.Notify.success(
+              `✅ Fulfilled promise ${counterOfAmount} in ${counterOfSteps}ms`,
+            );
+          })
+          .catch(({ position, delay }) => {
+            Notiflix.Notify.failure(
+              `❌ Rejected promise ${counterOfAmount} in ${counterOfSteps}ms`,
+            );
+          });
+        counterOfAmount += 1;
+        counterOfSteps += +delayStep;
+        if (counterOfAmount === +amount) {
+          clearInterval(intervalId);
+        }
+      }, delayStep);
+    }, firstDelay);
+  } else {
+    createPromise().finally(Notiflix.Notify.failure(`☝️Please select amount of promises`));
+  }
 }
 
 function createPromise(position, delay) {
