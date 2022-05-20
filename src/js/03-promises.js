@@ -11,39 +11,40 @@ refs.button.addEventListener(`click`, onClick);
 
 function onClick(e) {
   e.preventDefault();
+
   let firstDelay = refs.delay.value;
   let delayStep = refs.step.value;
   let amount = refs.amount.value;
-  let counterOfAmount = 0;
-  let counterOfSteps = 0;
+  let counterOfAmount = null;
+  let counterOfSteps = null;
 
   createPromise().finally(Notiflix.Notify.warning(`☝️Your request is being processed`));
 
-  const intervalId = setInterval(() => {
-    createPromise(amount, delayStep)
-      .then(({ position, delay }) => {
-        Notiflix.Notify.success(`✅ Fulfilled promise ${counterOfAmount} in ${counterOfSteps}ms`);
-      })
-      .catch(({ position, delay }) => {
-        Notiflix.Notify.failure(`❌ Rejected promise ${counterOfAmount} in ${counterOfSteps}ms`);
-      });
-    counterOfAmount += 1;
-    counterOfSteps += +delayStep;
-    if (counterOfAmount === +amount) {
-      clearInterval(intervalId);
-    }
-  }, delayStep);
+  setTimeout(() => {
+    const intervalId = setInterval(() => {
+      createPromise(amount, delayStep)
+        .then(({ position, delay }) => {
+          Notiflix.Notify.success(`✅ Fulfilled promise ${counterOfAmount} in ${counterOfSteps}ms`);
+        })
+        .catch(({ position, delay }) => {
+          Notiflix.Notify.failure(`❌ Rejected promise ${counterOfAmount} in ${counterOfSteps}ms`);
+        });
+      counterOfAmount += 1;
+      counterOfSteps += +delayStep;
+      if (counterOfAmount === +amount) {
+        clearInterval(intervalId);
+      }
+    }, delayStep);
+  }, firstDelay);
+}
 
-  function createPromise(position, delay) {
-    return new Promise((fulfilled, rejected) => {
-      const shouldResolve = Math.random() > 0.3;
-      setTimeout(() => {
-        if (shouldResolve) {
-          fulfilled({ position, delay });
-        } else {
-          rejected({ position, delay });
-        }
-      }, firstDelay);
-    });
-  }
+function createPromise(position, delay) {
+  return new Promise((fulfilled, rejected) => {
+    const shouldResolve = Math.random() > 0.3;
+    if (shouldResolve) {
+      fulfilled({ position, delay });
+    } else {
+      rejected({ position, delay });
+    }
+  });
 }
