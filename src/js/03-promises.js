@@ -27,8 +27,10 @@ function onClick(e) {
   let amount = refs.amount.value;
   let counterOfAmount = 0;
   let counterOfSteps = 0;
-  //Notiflix.Notify.info(`☝️Your request is being processed`);
+  Notiflix.Notify.info(`☝️Your request is being processed`);
+
   setTimeout(() => {
+    refs.button.disabled = true;
     if (amount !== '') {
       const intervalId = setInterval(
         () => {
@@ -46,7 +48,9 @@ function onClick(e) {
 
           counterOfAmount += 1;
           counterOfSteps += +delayStep;
+
           if (counterOfAmount === +amount) {
+            refs.button.disabled = false;
             clearInterval(intervalId);
           }
         },

@@ -23,12 +23,11 @@ const fp = flatpickr(refs.inputDatetime, {
       return;
     }
     refs.startBtn.disabled = false;
-    console.log(selectedDates[0].getTime());
   },
 });
 
 let currentDates = Date.now();
-let timeLeftConvert;
+let timerId = null;
 
 refs.startBtn.addEventListener(`click`, start);
 
@@ -50,22 +49,11 @@ function convertMs(ms) {
   //console.log({ days, hours, minutes, seconds });
   return { days, hours, minutes, seconds };
 }
-
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
-
-refs.startBtn.disabled = false;
-
-function start(e) {
-  let timeLeftUNIX = fp.selectedDates[0].getTime() - currentDates;
-
-  const timerId = setInterval(() => {
-    timeLeftUNIX -= 1000;
-    timeLeftConvert = convertMs(timeLeftUNIX);
-    refs.startBtn.disabled = true;
-
-    refs.timer.innerHTML = `<div class="field">
+function addTemplateHTML(timeLeftConvert) {
+  refs.timer.innerHTML = `<div class="field">
         <span class="value" data-days>${addLeadingZero(timeLeftConvert.days)}</span>
         <span class="label">Days</span>
       </div>
@@ -81,6 +69,23 @@ function start(e) {
         <span class="value" data-seconds>${addLeadingZero(timeLeftConvert.seconds)}</span>
         <span class="label">Seconds</span>
       </div>`;
+}
+
+function start(e) {
+  let timeLeftUNIX = fp.selectedDates[0].getTime() - currentDates;
+
+  if (fp.selectedDates[0].getTime() <= currentDates) {
+    Notiflix.Notify.failure('Please choose a date in the future');
+    convertMs(timeLeftUNIX);
+    return;
+  }
+
+  clearInterval(timerId);
+
+  timerId = setInterval(() => {
+    timeLeftUNIX -= 1000;
+
+    addTemplateHTML(convertMs(timeLeftUNIX));
 
     if (Math.floor(timeLeftUNIX / 1000) === 0) {
       Notiflix.Notify.success('Time is up!');

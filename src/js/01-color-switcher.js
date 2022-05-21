@@ -1,8 +1,6 @@
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 }
-
-let currentHexColor;
 let intervalColorId = null;
 
 const refs = {
@@ -18,8 +16,7 @@ refs.stopBtn.disabled = true;
 
 function onStart() {
   intervalColorId = setInterval(() => {
-    currentHexColor = getRandomHexColor();
-    refs.background.style.background = currentHexColor;
+    refs.background.style.background = getRandomHexColor();
   }, 1000);
   refs.startBtn.disabled = true;
   refs.stopBtn.disabled = false;
@@ -28,7 +25,7 @@ function onStart() {
 function onStop() {
   if (onStart) {
     clearInterval(intervalColorId);
-    refs.background.style.background = currentHexColor;
+    refs.background.style.background = getRandomHexColor();
     refs.startBtn.disabled = false;
     refs.stopBtn.disabled = true;
   }
