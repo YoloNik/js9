@@ -1,63 +1,35 @@
 import Notiflix from 'notiflix';
 
-const refs = {
-  delay: document.querySelector(`input[name=delay]`),
-  step: document.querySelector(`input[name="step"]`),
-  amount: document.querySelector(`input[name="amount"]`),
-  button: document.querySelector(`button`),
-};
+const form = document.querySelector(`form`);
 
-refs.button.addEventListener(`click`, onClick);
+form.addEventListener(`submit`, onClick);
 
-function createPromise() {
+function createPromise(position, delay) {
   return new Promise((fulfilled, rejected) => {
     const shouldResolve = Math.random() > 0.3;
-    if (shouldResolve) {
-      fulfilled();
-    } else {
-      rejected();
-    }
+    setTimeout(() => {
+      if (shouldResolve) {
+        fulfilled(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      } else {
+        rejected(`❌ Rejected promise ${position} in ${delay}ms`);
+      }
+    }, delay);
   });
 }
 
 function onClick(e) {
   e.preventDefault();
-  let firstDelay = +refs.delay.value;
-  let delayStep = refs.step.value;
-  let amount = refs.amount.value;
-  let counterOfAmount = 0;
-  let counterOfSteps = 0;
-  Notiflix.Notify.info(`☝️Your request is being processed`);
-
-  setTimeout(() => {
-    refs.button.disabled = true;
-    if (amount !== '') {
-      const intervalId = setInterval(
-        () => {
-          createPromise()
-            .then(() => {
-              Notiflix.Notify.success(
-                `✅ Fulfilled promise ${counterOfAmount} in ${counterOfSteps}ms`,
-              );
-            })
-            .catch(() => {
-              Notiflix.Notify.failure(
-                `❌ Rejected promise ${counterOfAmount} in ${counterOfSteps}ms`,
-              );
-            });
-
-          counterOfAmount += 1;
-          counterOfSteps += +delayStep;
-
-          if (counterOfAmount === +amount) {
-            refs.button.disabled = false;
-            clearInterval(intervalId);
-          }
-        },
-        counterOfSteps === 1 ? 0 : delayStep,
-      );
-    } else {
-      Notiflix.Notify.failure(`❌Error. Amount of promises not selected`);
-    }
-  }, firstDelay);
+  let firstDelay = e.target.delay.value;
+  let delayStep = e.target.step.value;
+  let amount = e.target.amount.value;
+  for (let i = 1; i <= amount; i += 1) {
+    let delay = +firstDelay + +delayStep * (i - 1);
+    createPromise(i, delay)
+      .then(data => {
+        Notiflix.Notify.success(data);
+      })
+      .catch(data => {
+        Notiflix.Notify.failure(data);
+      });
+  }
 }
